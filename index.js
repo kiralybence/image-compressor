@@ -8,11 +8,23 @@ app.post('/api/compress', upload.single('image'), async (req, res) => {
     let image = sharp(req.file.buffer)
 
     if (req.query['format']) {
-        image = image.toFormat(req.query['format'], JSON.parse(req.query['options'] ?? '{}'))
+        let options = req.query['formatOptions']
+            ? JSON.parse(req.query['formatOptions'])
+            : {}
+
+        image = image.toFormat(req.query['format'], options)
         res.contentType(`image/${req.query['format']}`)
     } else {
-        image = image.jpeg({ quality: 50, mozjpeg: true })
+        image = image.jpeg({ mozjpeg: true })
         res.contentType('image/jpeg')
+    }
+
+    if (req.query['resize']) {
+        let options = req.query['resizeOptions']
+            ? JSON.parse(req.query['resizeOptions'])
+            : { width: 1080, height: 1080, withoutEnlargement: true, fit: sharp.fit.inside }
+
+        image = image.resize(options)
     }
 
     if (req.query['withMetadata']) {
