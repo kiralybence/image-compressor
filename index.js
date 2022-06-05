@@ -5,13 +5,21 @@ const app = express()
 const upload = multer({ storage: multer.memoryStorage() })
 
 app.post('/api/compress', upload.single('image'), async (req, res) => {
-    const image = await sharp(req.file.buffer)
-        .jpeg({ quality: 50 })
-        .withMetadata()
-        .toBuffer()
+    let image = sharp(req.file.buffer)
 
-    res.contentType('image/jpeg')
-    res.send(image)
+    if (req.query['format']) {
+        image = image.toFormat(req.query['format'], JSON.parse(req.query['options'] ?? '{}'))
+        res.contentType(`image/${req.query['format']}`)
+    } else {
+        image = image.jpeg({ quality: 50, mozjpeg: true })
+        res.contentType('image/jpeg')
+    }
+
+    if (req.query['withMetadata']) {
+        image = image.withMetadata()
+    }
+
+    res.send(await image.toBuffer())
 })
 
 app.listen(3000)
