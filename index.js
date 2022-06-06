@@ -4,6 +4,10 @@ const sharp = require('sharp')
 const app = express()
 const upload = multer({ storage: multer.memoryStorage() })
 
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html')
+})
+
 app.post('/api/compress', upload.single('image'), async (req, res) => {
     let image = sharp(req.file.buffer)
 
@@ -32,6 +36,10 @@ app.post('/api/compress', upload.single('image'), async (req, res) => {
     }
 
     res.send(await image.toBuffer())
+})
+
+app.use((req, res, next) => {
+    res.status(404).send()
 })
 
 app.listen(3000)

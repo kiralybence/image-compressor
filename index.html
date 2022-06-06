@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Image Compressor</title>
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form method="POST" action="/api/compress" enctype="multipart/form-data">
+            <input type="file" name="image">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
